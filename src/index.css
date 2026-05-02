@@ -1,0 +1,55 @@
+@import "@fontsource/inter/400.css";
+@import "@fontsource/inter/500.css";
+@import "@fontsource/inter/600.css";
+@import "@fontsource/inter/700.css";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 210 18% 97%;
+    --foreground: 215 20% 22%;
+    --card: 0 0% 100%;
+    --card-foreground: 215 20% 22%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 215 20% 22%;
+    --primary: 215 50% 48%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 210 12% 93%;
+    --secondary-foreground: 215 15% 35%;
+    --muted: 210 10% 92%;
+    --muted-foreground: 215 8% 52%;
+    --accent: 210 14% 93%;
+    --accent-foreground: 215 20% 22%;
+    --destructive: 0 60% 50%;
+    --destructive-foreground: 0 0% 100%;
+    --success: 152 40% 44%;
+    --success-foreground: 0 0% 100%;
+    --warning: 38 70% 50%;
+    --warning-foreground: 0 0% 100%;
+    --info: 215 50% 52%;
+    --info-foreground: 0 0% 100%;
+    --border: 210 12% 90%;
+    --input: 210 12% 88%;
+    --ring: 215 50% 48%;
+    --radius: 0.625rem;
+    --sidebar-background: 215 20% 17%;
+    --sidebar-foreground: 210 12% 85%;
+    --sidebar-primary: 215 50% 52%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 215 16% 23%;
+    --sidebar-accent-foreground: 210 12% 90%;
+    --sidebar-border: 215 16% 14%;
+    --sidebar-ring: 215 50% 52%;
+    --sidebar-muted: 210 8% 55%;
+  }
+}
+
+@layer base {
+  * { @apply border-border; }
+  html { font-family: "Inter", system-ui, sans-serif; }
+  body { @apply bg-background text-foreground antialiased; }
+  input:focus, textarea:focus, select:focus { outline: none !important; box-shadow: none !important; }
+}

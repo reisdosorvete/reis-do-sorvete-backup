@@ -1,0 +1,4 @@
+project_id = "fpkuzhmnpfhoifpdpkcq"
+
+[functions.insert-product]
+verify_jwt = false
