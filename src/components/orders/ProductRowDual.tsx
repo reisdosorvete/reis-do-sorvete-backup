@@ -48,6 +48,9 @@ export function ProductRowDual({
     }
   };
 
+  const isPote = ['copinho', 'sundae', 'seletto'].includes(product.category);
+  const embalagemNome = isPote ? 'Caixinha' : 'Caixa';
+
   return (
     <div className={cn('p-4 border rounded-2xl bg-card hover:shadow-md transition-all duration-200', className)}>
       <div className="flex justify-between items-start mb-1">
@@ -66,7 +69,7 @@ export function ProductRowDual({
       <div className="mt-5 space-y-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2 text-sm text-muted-foreground font-medium">
-            <Package className="h-4 w-4" /> Caixa
+            <Package className="h-4 w-4" /> {embalagemNome}
           </div>
           <div className="flex items-center gap-1 bg-muted/40 p-1 rounded-full border border-border/50">
             <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full hover:bg-background hover:shadow-sm" onClick={() => onBoxesChange(Math.max(0, boxes - 1))}>

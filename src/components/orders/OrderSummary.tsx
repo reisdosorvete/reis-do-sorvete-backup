@@ -61,13 +61,6 @@ export function OrderSummary({ items, className }: OrderSummaryProps) {
           <span>Subtotal ({totalItems} itens)</span>
           <span>{formatCurrency(subtotal)}</span>
         </div>
-        
-        <div className="p-3 rounded-lg bg-blue-50 border border-blue-100 flex gap-2 items-start">
-          <Info className="h-4 w-4 text-blue-500 shrink-0 mt-0.5" />
-          <p className="text-[10px] text-blue-700 leading-tight">
-            O desconto de franqueado deve ser aplicado manualmente na tela de geração do PDF após salvar o pedido.
-          </p>
-        </div>
 
         <div className="pt-3 border-t border-border flex justify-between items-center">
           <span className="text-base font-bold text-foreground">Total Bruto</span>
