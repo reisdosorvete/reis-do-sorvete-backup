@@ -82,8 +82,18 @@ export default function NewOrder() {
       filtered = filtered.filter((p) => p.category === selectedCategory);
     }
     
+    // ORDENAÇÃO: Joga quem tem quantidade > 0 lá pro topo!
+    filtered.sort((a, b) => {
+      const aSelected = (boxQuantities[a.id] || 0) > 0 || (looseQuantities[a.id] || 0) > 0 || (crateQuantities[a.id] || 0) > 0;
+      const bSelected = (boxQuantities[b.id] || 0) > 0 || (looseQuantities[b.id] || 0) > 0 || (crateQuantities[b.id] || 0) > 0;
+      
+      if (aSelected && !bSelected) return -1;
+      if (!aSelected && bSelected) return 1; 
+      return a.name.localeCompare(b.name);   
+    });
+    
     return filtered;
-  }, [activeProducts, search, selectedCategory]);
+  }, [activeProducts, search, selectedCategory, boxQuantities, looseQuantities, crateQuantities]);
 
   const categories = useMemo(() => {
     const cats = new Set(activeProducts.map((p) => p.category));
