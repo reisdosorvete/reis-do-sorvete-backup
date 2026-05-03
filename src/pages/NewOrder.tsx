@@ -1,28 +1,34 @@
-import { useState, useMemo, useCallback } from 'react';
-
+import { useState, useMemo, useCallback, useEffect } from 'react';
 import { PageHeader } from '@/components/layout/PageHeader';
 import { ProductRow } from '@/components/orders/ProductRow';
 import { ProductRowDual } from '@/components/orders/ProductRowDual';
 import { ProductRowCrate } from '@/components/orders/ProductRowCrate';
 import { OrderSummary } from '@/components/orders/OrderSummary';
 import { useProducts } from '@/hooks/useProducts';
+import { useOrders } from '@/hooks/useOrders';
 import { useAuth } from '@/contexts/AuthContext';
 import { Store, STORE_NAMES, CATEGORY_NAMES, OrderItem, isDualSaleCategory, isCrateSaleCategory } from '@/types';
 import { Search, MapPin, ArrowRight, ArrowLeft, Filter } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams, useLocation } from 'react-router-dom';
 import { toast } from 'sonner';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 
 export default function NewOrder() {
-   const { products } = useProducts();
+  const { products } = useProducts();
+  const { orders } = useOrders(); // Necessário para buscar os dados do pedido sendo editado
   const { profile } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const [searchParams, setSearchParams] = useSearchParams();
   
-  const storeParam = searchParams.get('loja') as Store | null;
-  const selectedStore = storeParam && STORE_NAMES[storeParam] ? storeParam : null;
+  // Pega o ID do pedido caso o usuário tenha clicado em "Editar"
+  const editingOrderId = location.state?.editingOrderId;
+
+  // Usa a loja do pedido sendo editado ou a loja da URL
+  const initialStore = location.state?.store || (searchParams.get('loja') as Store | null);
+  const selectedStore = initialStore && STORE_NAMES[initialStore] ? initialStore : null;
 
   const setSelectedStore = useCallback((store: Store | null) => {
     if (store) {
@@ -37,6 +43,28 @@ export default function NewOrder() {
   const [looseQuantities, setLooseQuantities] = useState<Record<string, number>>({});
   const [crateQuantities, setCrateQuantities] = useState<Record<string, number>>({});
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+
+  // EFEITO MÁGICO: Preenche as quantidades se estivermos editando um pedido
+  useEffect(() => {
+    if (editingOrderId && orders.length > 0) {
+      const orderToEdit = orders.find(o => o.id === editingOrderId);
+      if (orderToEdit) {
+        const newBoxes: Record<string, number> = {};
+        const newLoose: Record<string, number> = {};
+        const newCrates: Record<string, number> = {};
+
+        orderToEdit.items.forEach(item => {
+          if (item.boxes > 0) newBoxes[item.productId] = item.boxes;
+          if (item.looseUnits > 0) newLoose[item.productId] = item.looseUnits;
+          if (item.crates > 0) newCrates[item.productId] = item.crates;
+        });
+
+        setBoxQuantities(newBoxes);
+        setLooseQuantities(newLoose);
+        setCrateQuantities(newCrates);
+      }
+    }
+  }, [editingOrderId, orders]);
 
   const activeProducts = products.filter((p) => p.active);
 
@@ -144,6 +172,7 @@ export default function NewOrder() {
          boxQuantities,
          looseQuantities,
          crateQuantities,
+         editingOrderId // Passando a informação para a tela de revisão sobrescrever o pedido!
        },
      });
   };
@@ -194,7 +223,7 @@ export default function NewOrder() {
   return (
     <>
       <PageHeader 
-        title={`Pedido - ${STORE_NAMES[selectedStore]}`}
+        title={editingOrderId ? `Editando Pedido - ${STORE_NAMES[selectedStore]}` : `Pedido - ${STORE_NAMES[selectedStore]}`}
         description={`Operador: ${operatorName}`}
       >
         <Button variant="outline" onClick={() => setSelectedStore(null)} className="gap-2">
@@ -277,6 +306,7 @@ export default function NewOrder() {
                      boxes={boxQuantities[product.id] || 0}
                      looseUnits={looseQuantities[product.id] || 0}
                      onBoxesChange={(boxes) => handleBoxesChange(product.id, boxes)}
+                     onLooseUnitsChange={(units) => handleLooseUnitsChange(product.id, units)}
                    />
                  );
                })}
