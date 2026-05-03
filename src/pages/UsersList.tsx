@@ -1,7 +1,6 @@
 import { PageHeader } from '@/components/layout/PageHeader';
 import { useAppUsers } from '@/hooks/useAppUsers';
-import { UserPlus, Shield, Mail, User } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { Shield, User } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 
 export default function UsersList() {
@@ -9,11 +8,7 @@ export default function UsersList() {
 
   return (
     <>
-      <PageHeader title="Usuários" description="Gerencie as permissões de acesso">
-        <Button className="gap-2">
-          <UserPlus className="h-4 w-4" /> Novo Usuário
-        </Button>
-      </PageHeader>
+      <PageHeader title="Usuários" description="Equipe com acesso ao sistema" />
 
       <div className="p-6">
         <div className="bg-card rounded-xl border border-border shadow-sm overflow-hidden">
@@ -22,7 +17,6 @@ export default function UsersList() {
               <tr className="bg-muted/50 border-b border-border">
                 <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider">Usuário</th>
                 <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider">Permissão</th>
-                <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-right">Ações</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
@@ -41,11 +35,8 @@ export default function UsersList() {
                   </td>
                   <td className="px-6 py-4">
                     <Badge variant={user.role === 'admin' ? 'default' : 'secondary'} className="gap-1">
-                      <Shield className="h-3 w-3" /> {user.role}
+                      <Shield className="h-3 w-3" /> {user.role === 'admin' ? 'Administrador' : 'Usuário'}
                     </Badge>
-                  </td>
-                  <td className="px-6 py-4 text-right">
-                    <Button variant="ghost" size="sm">Editar</Button>
                   </td>
                 </tr>
               ))}
