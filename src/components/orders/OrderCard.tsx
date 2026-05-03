@@ -43,12 +43,14 @@ export function OrderCard({ order, onClick, className }: OrderCardProps) {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-3 text-xs text-muted-foreground">
+      <div className="flex items-center gap-4 text-xs text-muted-foreground">
         <div className="flex items-center gap-1.5">
-          <Calendar className="h-3.5 w-3.5" />
-          {format(new Date(order.createdAt), "dd 'de' MMM", { locale: ptBR })}
+          <Calendar className="h-3.5 w-3.5 shrink-0" />
+          <span className="truncate">
+            {format(new Date(order.createdAt), "dd 'de' MMM 'às' HH:mm", { locale: ptBR })}
+          </span>
         </div>
-        <div className="flex items-center gap-1.5">
+        <div className="flex items-center gap-1.5 shrink-0 ml-auto">
           <Package className="h-3.5 w-3.5" />
           {order.items.length} itens
         </div>
