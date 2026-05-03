@@ -112,6 +112,17 @@ export default function OrderPreview() {
             <ArrowLeft className="h-4 w-4" />
             Voltar
           </Button>
+          
+          {/* BOTÃO DE EDITAR PEDIDO AQUI */}
+          <Button 
+            variant="outline" 
+            className="gap-2 text-primary border-primary hover:bg-primary/10"
+            onClick={() => navigate('/novo-pedido', { state: { store: order.store, editingOrderId: order.id } })}
+          >
+            <Pencil className="h-4 w-4" />
+            Editar Pedido
+          </Button>
+
           <Button onClick={handleDownload} className="gap-2">
             <Download className="h-4 w-4" />
             Baixar PDF
