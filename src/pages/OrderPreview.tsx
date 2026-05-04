@@ -7,14 +7,14 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Order, STORE_NAMES, OrderItem, STORE_INFO } from '@/types';
-  import { ArrowLeft, Download, FileText, Pencil, X, Building2, Phone, Mail, MapPin, Circle } from 'lucide-react';
+import { ArrowLeft, Download, FileText, Pencil, X, Building2, MapPin, Trash2 } from 'lucide-react';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { generateOrderPDF, PDFHeaderData } from '@/lib/pdfGenerator';
 import { toast } from 'sonner';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { formatCurrency, formatNumber } from '@/lib/utils';
-  import { Badge } from '@/components/ui/badge';
+import { useOrders } from '@/hooks/useOrders';
 
 const EMPTY_HEADER_DATA: PDFHeaderData = {
   companyName: '',
@@ -43,6 +43,9 @@ export default function OrderPreview() {
   const navigate = useNavigate();
   const location = useLocation();
   const order = location.state?.order as Order | undefined;
+  
+  // Puxando a função de apagar pedidos do nosso hook
+  const { permanentDeleteOrder } = useOrders();
 
   const storeInfo = order ? STORE_INFO[order.store] : null;
   const [headerData, setHeaderData] = useState<PDFHeaderData>({
@@ -63,19 +66,31 @@ export default function OrderPreview() {
   }
 
   const handleDownload = () => {
-  if (!headerData.companyName || !headerData.cnpj || !headerData.paymentMethod) {
-    toast.error('Preencha os campos obrigatórios: Nome da Empresa, CNPJ e Forma de Pagamento');
-    return;
-  }
-  
-  try {
-    generateOrderPDF(order, headerData);
-    toast.success('PDF gerado com sucesso!');
-  } catch (error) {
-    console.error('Erro ao gerar PDF:', error);
-    toast.error('Ocorreu um erro ao gerar o PDF. Verifique os dados.');
-  }
-};
+    if (!headerData.companyName || !headerData.cnpj || !headerData.paymentMethod) {
+      toast.error('Preencha os campos obrigatórios: Nome da Empresa, CNPJ e Forma de Pagamento');
+      return;
+    }
+    
+    try {
+      generateOrderPDF(order, headerData);
+      toast.success('PDF gerado com sucesso!');
+    } catch (error) {
+      console.error('Erro ao gerar PDF:', error);
+      toast.error('Ocorreu um erro ao gerar o PDF. Verifique os dados.');
+    }
+  };
+
+  // Função para deletar o pedido
+  const handleDelete = async () => {
+    if (window.confirm('Tem certeza que deseja apagar permanentemente este pedido? Esta ação não pode ser desfeita.')) {
+      try {
+        await permanentDeleteOrder(order.id);
+        toast.success('Pedido apagado com sucesso!');
+        navigate('/pedidos'); 
+      } catch (error) {
+      }
+    }
+  };
 
   const calculateItemTotal = (item: OrderItem) => {
     return item.totalUnits * item.unitPrice;
@@ -112,8 +127,17 @@ export default function OrderPreview() {
             <ArrowLeft className="h-4 w-4" />
             Voltar
           </Button>
-          
-          {/* BOTÃO DE EDITAR PEDIDO AQUI */}
+
+          {/* BOTÃO DE APAGAR ADICIONADO */}
+          <Button 
+            variant="outline" 
+            className="gap-2 text-destructive border-destructive hover:bg-destructive/10"
+            onClick={handleDelete}
+          >
+            <Trash2 className="h-4 w-4" />
+            Apagar
+          </Button>
+
           <Button 
             variant="outline" 
             className="gap-2 text-primary border-primary hover:bg-primary/10"
