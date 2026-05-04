@@ -55,11 +55,9 @@ export function useProducts() {
     },
     onSuccess: async () => {
       await refetch();
-      toast.success('Produto criado com sucesso!');
     },
     onError: (error) => {
       console.error('Error adding product:', error);
-      toast.error('Erro ao criar produto');
     },
   });
 
@@ -77,11 +75,9 @@ export function useProducts() {
     },
     onSuccess: async () => {
       await refetch();
-      toast.success('Produto atualizado com sucesso!');
     },
     onError: (error) => {
       console.error('Error updating product:', error);
-      toast.error('Erro ao atualizar produto');
     },
   });
 
@@ -104,15 +100,43 @@ export function useProducts() {
     },
   });
 
+  // Tradutores para converter do formato da tela para o formato do Banco de Dados
+  const handleAddProduct = async (productData: Partial<Product>) => {
+    return addProduct.mutateAsync({
+      name: productData.name!,
+      code: productData.code,
+      category: productData.category!,
+      units_per_box: productData.unitsPerBox!,
+      boxes_per_crate: productData.boxesPerCrate!,
+      units_per_crate: productData.unitsPerCrate!,
+      unit_price: productData.unitPrice!,
+      active: productData.active !== undefined ? productData.active : true,
+    });
+  };
+
+  const handleUpdateProduct = async (id: string, updates: Partial<Product>) => {
+    const dbUpdates: ProductUpdate = {};
+    if (updates.name !== undefined) dbUpdates.name = updates.name;
+    if (updates.code !== undefined) dbUpdates.code = updates.code;
+    if (updates.category !== undefined) dbUpdates.category = updates.category;
+    if (updates.unitsPerBox !== undefined) dbUpdates.units_per_box = updates.unitsPerBox;
+    if (updates.boxesPerCrate !== undefined) dbUpdates.boxes_per_crate = updates.boxesPerCrate;
+    if (updates.unitsPerCrate !== undefined) dbUpdates.units_per_crate = updates.unitsPerCrate;
+    if (updates.unitPrice !== undefined) dbUpdates.unit_price = updates.unitPrice;
+    if (updates.active !== undefined) dbUpdates.active = updates.active;
+    
+    return updateProduct.mutateAsync({ id, ...dbUpdates });
+  };
+
   return {
     products,
     rawProducts,
     isLoading,
     error,
     refetch,
-    addProduct: addProduct.mutate,
-    updateProduct: updateProduct.mutate,
-    deleteProduct: deleteProduct.mutate,
+    addProduct: handleAddProduct,
+    updateProduct: handleUpdateProduct,
+    deleteProduct: deleteProduct.mutateAsync,
     isAdding: addProduct.isPending,
     isUpdating: updateProduct.isPending,
     isDeleting: deleteProduct.isPending,

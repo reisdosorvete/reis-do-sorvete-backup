@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 interface ProductRowProps {
   product: Product;
   boxes: number;
-  looseUnits?: number; // Agora ele aceita os avulsos de forma opcional
+  looseUnits?: number; 
   onBoxesChange: (boxes: number) => void;
   className?: string;
 }
@@ -17,7 +17,6 @@ export function ProductRow({ product, boxes = 0, looseUnits = 0, onBoxesChange, 
   const boxPrice = product.unitsPerBox * product.unitPrice;
   const itemTotal = boxes * boxPrice;
 
-  // Lógica de fallback para não dar NaN no total, seguindo a estrutura antiga do Rikelme
   const totalUnitsCalculated = (boxes * product.unitsPerBox) + looseUnits;
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {

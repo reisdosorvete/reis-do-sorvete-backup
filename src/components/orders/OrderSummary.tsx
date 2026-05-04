@@ -61,6 +61,12 @@ export function OrderSummary({ items, className }: OrderSummaryProps) {
           <span>Subtotal ({totalItems} itens)</span>
           <span>{formatCurrency(subtotal)}</span>
         </div>
+        
+        <div className="py-2 flex gap-2 items-start">
+          <p className="text-[10px] text-blue-700 leading-tight">
+            O desconto deve ser aplicado manualmente na tela de geração do PDF após salvar o pedido.
+          </p>
+        </div>
 
         <div className="pt-3 border-t border-border flex justify-between items-center">
           <span className="text-base font-bold text-foreground">Total Bruto</span>
